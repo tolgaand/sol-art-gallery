@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "lib/prismaClient";
 import { IImage } from "types";
 
-const PER_PAGE = 10;
+const PER_PAGE = 100;
 
 export default async function handler(
   req: NextApiRequest,
