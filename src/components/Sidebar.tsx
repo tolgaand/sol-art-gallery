@@ -22,6 +22,8 @@ import {
   MenuItem,
   MenuList,
   createIcon,
+  Button,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FiHome, FiCompass, FiMenu, FiStar } from "react-icons/fi";
 import { IconType } from "react-icons";
@@ -30,6 +32,8 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+
+import { BsSun, BsMoonStarsFill } from "react-icons/bs";
 
 interface LinkItemProps {
   name: string;
@@ -157,6 +161,8 @@ interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -187,38 +193,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </Text>
 
       <HStack spacing={{ base: "0", md: "30" }}>
-        {/* <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: "none" }}
-              onClick={createImagePopup.onOpen}
-            >
-              <Link>Create a Image</Link>
-              <Box>
-                <Icon
-                  as={Arrow}
-                  color={useColorModeValue("gray.800", "gray.300")}
-                  w={71}
-                  position={"absolute"}
-                  right={-71}
-                  top={"10px"}
-                />
-                <Text
-                  fontSize={"lg"}
-                  fontFamily={"Caveat"}
-                  position={"absolute"}
-                  right={"-125px"}
-                  top={"-15px"}
-                  transform={"rotate(10deg)"}
-                >
-                  Starting at $15/mo
-                </Text>
-              </Box>
-            </MenuButton>
-          </Menu>
-        </Flex> */}
+        <Button
+          aria-label="Toggle Color Mode"
+          onClick={toggleColorMode}
+          _focus={{ boxShadow: "none" }}
+          w="fit-content"
+        >
+          {colorMode === "light" ? <BsMoonStarsFill /> : <BsSun />}
+        </Button>
         <WalletMultiButton />
       </HStack>
     </Flex>
