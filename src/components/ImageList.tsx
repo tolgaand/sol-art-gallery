@@ -53,7 +53,7 @@ export const ImageList = (props: ImageListType) => {
             zIndex: -1,
           }}
         >
-          Sol Art Gallery!
+          solart.place
         </Text>
       </Heading>
       <Button
