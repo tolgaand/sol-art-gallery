@@ -9,28 +9,37 @@ type Data = {
   prompt: string;
 };
 
+import fs from "fs";
+import path from "path";
+
+const generateRandomImageName = () => {
+  const random = Math.random().toString(36).substring(7);
+  return `${random}.jpg`;
+};
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data | { message: string }>
 ) {
-  const prompt = generateWords(7) + " photorealistic";
+  try {
+    let { prompt } = req.query;
+    prompt = prompt as string;
 
-  const response = await openai.createImage({
-    prompt,
-    n: 1,
-    size: "1024x1024",
-  });
+    const response = await openai.createImage({
+      prompt,
+      n: 1,
+      size: "1024x1024",
+    });
 
-  console.log(response.data.data);
+    const imageUri = response.data.data[0].url;
 
-  const imageUri = response.data.data[0].url;
+    // if (imageUri)
+    //   await downloadImageFromUri(imageUri, generateRandomImageName());
 
-  await prisma.image.create({
-    data: {
-      name: prompt,
-      url: imageUri as string,
-    },
-  });
-
-  res.status(200).json({ imageUri, prompt });
+    res.status(200).json({ imageUri, prompt });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: error?.response?.data?.message || error.message });
+  }
 }

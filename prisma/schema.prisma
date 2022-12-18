@@ -10,12 +10,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Image {
+model User {
   id String @id @unique(sort: Desc) @default(cuid())
 
-  name String
-  url  String @db.Text
+  publicKey String  @unique(sort: Desc)
+  images    Image[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Image {
+  id String @id @unique(sort: Desc) @default(cuid())
+
+  prompt String
+  url    String
+
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  VotesFor     Vote[] @relation("votesFor")
+  VotesAgainst Vote[] @relation("votesAgainst")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId(sort: Desc)])
+}
+
+model Vote {
+  id String @id @unique(sort: Desc) @default(cuid())
+
+  votedFor   Image  @relation(name: "votesFor", fields: [votedForId], references: [id])
+  votedForId String
+
+  votedAgainst   Image  @relation(name: "votesAgainst", fields: [votedAgainstId], references: [id])
+  votedAgainstId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([votedForId(sort: Desc)])
+  @@index([votedAgainstId(sort: Desc)])
 }
