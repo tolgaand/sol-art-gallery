@@ -25,6 +25,7 @@ import {
 import { clusterApiUrl } from "@solana/web3.js";
 import { useMemo } from "react";
 import { DefaultContainer } from "container/Default";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 // Default styles that can be overridden by your app
 
@@ -41,6 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <ConnectionProvider endpoint={endpoint}>
           <WalletProvider wallets={wallets} autoConnect>
             <WalletModalProvider>
+              <GoogleAnalytics trackPageViews />
               <DefaultContainer>
                 <Component {...pageProps} />
               </DefaultContainer>
