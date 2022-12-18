@@ -25,7 +25,7 @@ export const ImageCard = ({ image }: ImageCardProps) => {
         <Text>{image.prompt}</Text>
         <Divider color="black" />
         <Text>
-          Creator: <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
+          Generator: <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
         </Text>
       </Stack>
     </Box>
