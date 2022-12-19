@@ -1,6 +1,8 @@
 import { Box, Divider, Image, Link, Stack, Text } from "@chakra-ui/react";
 import { IImage } from "types";
 
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
 type ImageCardProps = {
   image: IImage;
 };
@@ -13,12 +15,7 @@ export const ImageCard = ({ image }: ImageCardProps) => {
   return (
     <Box key={image.id} backgroundColor="#607DE6" borderRadius="30px">
       <Link target="_blank" href={image.url}>
-        <Image
-          src={image.url}
-          alt={image.prompt}
-          borderTopRadius="30px"
-          placeholder="blur"
-        />
+        <LazyLoadImage src={image.url} alt={image.prompt} effect="blur" />
       </Link>
 
       <Stack padding="20px">
