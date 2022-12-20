@@ -5,4 +5,9 @@ const config: ThemeConfig = {
   useSystemColorMode: true,
 };
 
-export const theme = extendTheme({ config });
+export const theme = extendTheme({
+  config,
+  fonts: {
+    body: `'Poppins', sans-serif`,
+  },
+});
