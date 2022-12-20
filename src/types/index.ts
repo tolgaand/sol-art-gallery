@@ -5,4 +5,8 @@ export type IImage = {
   user?: {
     publicKey: string;
   } | null;
+  _count?: {
+    VotesFor: number;
+    VotesAgainst: number;
+  };
 };

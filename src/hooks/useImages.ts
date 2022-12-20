@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "react-query";
 
 export const useImages = (page: number) => {
   return useQuery("images", async () => {
-    const res = await axios(`/api/get-images?page=${page}`);
+    const res = await axios(`/api/get-images-in-order?page=${page}`);
     return res.data;
   });
 };

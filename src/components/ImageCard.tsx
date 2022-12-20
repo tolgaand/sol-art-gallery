@@ -45,6 +45,13 @@ export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
 
       <Stack padding="20px">
         <Text>{image.prompt}</Text>
+        Test:{" "}
+        {image._count && (
+          <Stack>
+            <Text>votesFor({image._count.VotesFor})</Text>
+            <Text>votesAgainst({image._count.VotesAgainst})</Text>
+          </Stack>
+        )}
         <Divider color="black" />
         {image.user && (
           <Text>
@@ -52,7 +59,6 @@ export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
             <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
           </Text>
         )}
-
         {vote && <Button onClick={vote}>Vote!</Button>}
       </Stack>
     </Box>
