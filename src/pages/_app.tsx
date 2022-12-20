@@ -1,6 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import "assets/styles/globals.css";
+import "assets/styles/style.scss";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
 import type { AppProps } from "next/app";
