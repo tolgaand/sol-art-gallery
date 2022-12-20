@@ -1,19 +1,36 @@
-import { Box, Divider, Image, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Image,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { IImage } from "types";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 type ImageCardProps = {
   image: IImage;
+  width?: string;
+  height?: string;
+  vote?: () => void;
 };
 
 const sanitizePublicKey = (publicKey: string) => {
   return `${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`;
 };
 
-export const ImageCard = ({ image }: ImageCardProps) => {
+export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
   return (
-    <Box key={image.id} backgroundColor="#607DE6" borderRadius="30px">
+    <Box
+      key={image.id}
+      backgroundColor="#607DE6"
+      borderRadius="30px"
+      width={width || "auto"}
+      height={height || "auto"}
+    >
       <Link target="_blank" href={image.url}>
         <LazyLoadImage
           src={image.url}
@@ -29,9 +46,14 @@ export const ImageCard = ({ image }: ImageCardProps) => {
       <Stack padding="20px">
         <Text>{image.prompt}</Text>
         <Divider color="black" />
-        <Text>
-          Generator: <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
-        </Text>
+        {image.user && (
+          <Text>
+            Generator:{" "}
+            <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
+          </Text>
+        )}
+
+        {vote && <Button onClick={vote}>Vote!</Button>}
       </Stack>
     </Box>
   );

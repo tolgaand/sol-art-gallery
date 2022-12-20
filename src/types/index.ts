@@ -2,7 +2,7 @@ export type IImage = {
   id: string;
   url: string;
   prompt: string;
-  user: {
+  user?: {
     publicKey: string;
   } | null;
 };
