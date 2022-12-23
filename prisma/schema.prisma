@@ -23,7 +23,7 @@ model User {
 model Image {
   id String @id @unique(sort: Desc) @default(cuid())
 
-  prompt String
+  prompt String @db.Text
   url    String
 
   user   User?   @relation(fields: [userId], references: [id])
