@@ -10,6 +10,8 @@ import {
 import { IImage } from "types";
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { IoIosRocket, IoMdRocket } from "react-icons/io";
+import { FiUser } from "react-icons/fi";
 
 type ImageCardProps = {
   image: IImage;
@@ -45,19 +47,32 @@ export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
 
       <Stack padding="20px">
         <Text>{image.prompt}</Text>
-        Test:{" "}
-        {image._count && (
-          <Stack>
-            <Text>votesFor({image._count.VotesFor})</Text>
-            <Text>votesAgainst({image._count.VotesAgainst})</Text>
+        {image.percent != undefined && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            // backgroundColor="blue.500"
+            bgGradient="linear(to-r, green.200, pink.500)"
+            borderRadius="30px"
+            padding="10px"
+            color="black"
+          >
+            <IoIosRocket size="30px" />
+            <Text>{image.percent.toFixed(2)}%</Text>
           </Stack>
         )}
-        <Divider color="black" />
+
         {image.user && (
-          <Text>
-            Generator:{" "}
-            <b>{sanitizePublicKey(image.user?.publicKey as string)}</b>
-          </Text>
+          <Stack
+            direction="row"
+            alignItems="center"
+            backgroundColor="cyan.700"
+            borderRadius="30px"
+            padding="10px"
+          >
+            <FiUser size="30px" />
+            <Text>{sanitizePublicKey(image.user.publicKey)}</Text>
+          </Stack>
         )}
         {vote && <Button onClick={vote}>Vote!</Button>}
       </Stack>

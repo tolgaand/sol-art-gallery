@@ -14,12 +14,12 @@ const generateCountPercent = (image: Image) => {
 
   if (VotesFor + VotesAgainst === 0) return 0;
 
-  return ((VotesFor / (VotesFor + VotesAgainst)) * 100).toFixed(2);
+  return Number((VotesFor / (VotesFor + VotesAgainst)) * 100);
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IImage[]>
+  res: NextApiResponse<Image[]>
 ) {
   try {
     const images = await prisma.image.findMany({
@@ -54,6 +54,10 @@ export default async function handler(
       if (difference === 0) return b._count.VotesFor - a._count.VotesFor;
 
       return difference;
+    });
+
+    images.map((image: Image) => {
+      image.percent = generateCountPercent(image);
     });
 
     res.status(200).json(images);
