@@ -24,6 +24,12 @@ const sanitizePublicKey = (publicKey: string) => {
   return `${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`;
 };
 
+const sanitizeImageDescription = (description: string) => {
+  return description.length > 100
+    ? `${description.slice(0, 100)}...`
+    : description;
+};
+
 export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
   return (
     <Box
@@ -45,35 +51,47 @@ export const ImageCard = ({ image, width, height, vote }: ImageCardProps) => {
         />
       </Link>
 
-      <Stack padding="20px">
-        <Text>{image.prompt}</Text>
-        {image.percent != undefined && (
-          <Stack
-            direction="row"
-            alignItems="center"
-            // backgroundColor="blue.500"
-            bgGradient="linear(to-r, green.200, pink.500)"
-            borderRadius="30px"
-            padding="10px"
-            color="black"
-          >
-            <IoIosRocket size="30px" />
-            <Text>{image.percent.toFixed(2)}%</Text>
-          </Stack>
-        )}
+      <Stack padding="20px" alignItems="space-between">
+        <Text fontSize="14px" minHeight="50px">
+          {sanitizeImageDescription(image.prompt)}
+        </Text>
+        <Divider background="blue.300" />
+        <Stack
+          direction={{
+            base: "column",
+            md: "row",
+          }}
+        >
+          {image.user && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              backgroundColor="cyan.700"
+              borderLeftRadius="30px"
+              borderRightRadius={{ base: "30px", md: "5px" }}
+              padding="10px"
+              width="100%"
+            >
+              <FiUser size="30px" />
+              <Text>{sanitizePublicKey(image.user.publicKey)}</Text>
+            </Stack>
+          )}
+          {image.percent != undefined && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              bgGradient="linear(to-r, green.200, pink.500)"
+              borderRightRadius="30px"
+              borderLeftRadius={{ base: "30px", md: "5px" }}
+              padding="10px"
+              color="black"
+            >
+              <IoIosRocket size="30px" />
+              <Text>{image.percent.toFixed(2)}%</Text>
+            </Stack>
+          )}
+        </Stack>
 
-        {image.user && (
-          <Stack
-            direction="row"
-            alignItems="center"
-            backgroundColor="cyan.700"
-            borderRadius="30px"
-            padding="10px"
-          >
-            <FiUser size="30px" />
-            <Text>{sanitizePublicKey(image.user.publicKey)}</Text>
-          </Stack>
-        )}
         {vote && <Button onClick={vote}>Vote!</Button>}
       </Stack>
     </Box>
