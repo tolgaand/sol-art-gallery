@@ -4,6 +4,7 @@ import { uploadImageToArweave } from "lib/uploadImageToArweave";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import prisma from "lib/prismaClient";
+import { checkLoginTx } from "lib/checkLoginTx";
 
 const connection = new Connection("https://api.devnet.solana.com");
 
@@ -19,20 +20,13 @@ export default async function handler(
   if (!(req.method === "POST"))
     return res.status(405).json({ message: "Method not allowed" });
 
-  const { pk, prompt, uri, txBase64 } = req.body;
+  const { publicKey, prompt, uri, signature } = req.body;
 
-  if (!prompt || !uri || !txBase64 || !pk)
+  if (!prompt || !uri || !signature || !publicKey)
     return res.status(400).json({ message: "Missing prompt" });
 
   try {
-    const { ok } = await fetch(
-      `${process.env.NEXT_PUBLIC_SOLANA_AUTH_WORKER_URL as string}/${pk}`,
-      {
-        method: "POST",
-
-        body: txBase64,
-      }
-    );
+    const ok = checkLoginTx(publicKey, signature);
 
     if (!ok) throw new Error("Invalid signature");
 
@@ -45,10 +39,10 @@ export default async function handler(
         user: {
           connectOrCreate: {
             where: {
-              publicKey: pk,
+              publicKey,
             },
             create: {
-              publicKey: pk,
+              publicKey,
             },
           },
         },
