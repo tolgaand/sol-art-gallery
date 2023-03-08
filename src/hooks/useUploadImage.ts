@@ -5,8 +5,8 @@ import { useMutation, useQueryClient } from "react-query";
 type InputType = {
   uri: string;
   prompt: string;
-  txBase64: string;
-  pk: string;
+  publicKey: string;
+  signature: string;
 };
 
 export const useUploadImage = () => {

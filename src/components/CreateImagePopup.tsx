@@ -17,14 +17,14 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { Transaction } from "@solana/web3.js";
+import { encode } from "bs58";
 import { verify } from "crypto";
 import { useGenerateImage } from "hooks/useGenerateImage";
 import { useGenerateWords } from "hooks/useGenerateWords";
 import { useUploadImage } from "hooks/useUploadImage";
-import { useWalletAuth } from "hooks/useWalletAuth";
 import { useEffect, useState } from "react";
 
 type CreateImagePopupProps = {
@@ -35,7 +35,8 @@ type CreateImagePopupProps = {
 export const CreateImagePopup = (props: CreateImagePopupProps) => {
   const { isOpen, onClose } = props;
 
-  const anchorWallet = useAnchorWallet();
+  const wallet = useWallet();
+  // const { wallet } = useWallet();
 
   const [magicWords, setMagicWords] = useState<string>("");
   const [generatedImageUri, setGeneratedImageUri] = useState<string>("");
@@ -43,7 +44,6 @@ export const CreateImagePopup = (props: CreateImagePopupProps) => {
   const generateWords = useGenerateWords();
   const generateImage = useGenerateImage();
   const uploadImage = useUploadImage();
-  const walletAuth = useWalletAuth();
 
   const [isImageUploading, setIsImageUploading] = useState<boolean>(false);
 
@@ -58,28 +58,29 @@ export const CreateImagePopup = (props: CreateImagePopupProps) => {
   };
 
   const handleUploadGeneratedImage = async () => {
-    if (!generatedImageUri || !magicWords || !anchorWallet) return;
+    if (!generatedImageUri || !magicWords || !wallet) return;
 
     try {
       setIsImageUploading(true);
 
-      const { unsignedTransaction } = await walletAuth.mutateAsync(
-        anchorWallet.publicKey.toString()
-      );
+      if (!wallet) throw new Error("Wallet not connected");
 
-      const uParseTx = Transaction.from(
-        Buffer.from(unsignedTransaction, "base64")
-      );
+      const publicKey = wallet.publicKey?.toBase58();
 
-      const tx = await anchorWallet.signTransaction(uParseTx);
+      if (!publicKey || !wallet.signMessage)
+        throw new Error("Wallet does not support signMessage");
 
-      const txBase64 = Buffer.from(tx.serialize()).toString("base64");
+      const loginSignMessage = "Submit Image to Solart.place";
+      const code = Math.floor(Date.now() / 12e4);
+
+      const msg = new TextEncoder().encode(`${loginSignMessage} ${code}`);
+      const signed = await wallet.signMessage(msg);
 
       await uploadImage.mutateAsync({
         uri: generatedImageUri,
         prompt: magicWords,
-        txBase64,
-        pk: anchorWallet.publicKey.toString(),
+        publicKey,
+        signature: encode(signed),
       });
 
       onClose();
@@ -145,8 +146,8 @@ export const CreateImagePopup = (props: CreateImagePopupProps) => {
                 <img src={generatedImageUri} />
                 <Stack marginTop="10px">
                   <Button onClick={resetForm}>Regenerate Image</Button>
-                  {!anchorWallet?.publicKey && <WalletMultiButton />}
-                  {anchorWallet?.publicKey && (
+                  {!wallet?.publicKey && <WalletMultiButton />}
+                  {wallet?.publicKey && (
                     <Button
                       colorScheme="linkedin"
                       isLoading={isImageUploading}
